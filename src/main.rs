@@ -28,14 +28,23 @@ impl Game {
     }
     
     fn is_won(&self) -> bool {
-        for token in self.players {
+        for &token in &self.players {
+            // check the rows of the board
             for row in 0..3 {
-                if self.grid[row] == token && self.grid[row + 1] == token && self.grid[row + 2] == token {return true;}
+                if self.grid[row * 3] == token && self.grid[row * 3 + 1] == token && self.grid[row * 3 + 2] == token {
+                    return true;
+                }
             }
+            // check the columns of the board
             for col in 0..3 {
-                if self.grid[0] == token && self.grid[3 + col] == token && self.grid[6 + col] == token {return true;}
+                if self.grid[col] == token && self.grid[3 + col] == token && self.grid[6 + col] == token {
+                    return true;
+                }
             }
-            if self.grid[0] == token && self.grid[4] == token && self.grid[8] == token ||  self.grid[2] == token && self.grid[4] == token && self.grid[6] == token {return true;}
+            // check the diagonals of the board
+            if (self.grid[0] == token && self.grid[4] == token && self.grid[8] == token) || (self.grid[2] == token && self.grid[4] == token && self.grid[6] == token) {
+                return true;
+            }
         }
         return false;
     }
