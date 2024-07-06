@@ -2,7 +2,12 @@ use std::io::{Write, stdout, stdin};
 
 struct Game {
     grid: [char; 9],
-    players: [char; 2]
+    players: [Player; 2]
+}
+
+struct Player {
+    name: String,
+    symbol: char
 }
 
 impl Game {
@@ -24,11 +29,12 @@ impl Game {
             return false;
         }
         let token: char = self.grid[position - 1];
-        return !(token == self.players[0] || token == self.players[1])
+        return !(token == self.players[0].symbol || token == self.players[1].symbol)
     }
     
     fn is_won(&self) -> bool {
-        for &token in &self.players {
+        for player in &self.players {
+            let token = player.symbol;
             // check the rows of the board
             for row in 0..3 {
                 if self.grid[row * 3] == token && self.grid[row * 3 + 1] == token && self.grid[row * 3 + 2] == token {
@@ -50,7 +56,8 @@ impl Game {
     }
 
     fn take_turn(&mut self, player: usize) {
-        println!("It's now player {}'s turn", player + 1);
+
+        println!("It's now {}'s turn", self.players[player].name);
 
         let position: usize = loop {
             print!("Where do you want to play? >>> ");
@@ -77,27 +84,27 @@ impl Game {
 
         };
 
-        self.grid[position - 1] = self.players[player];
+        self.grid[position - 1] = self.players[player].symbol;
         self.draw();
     }
 
     fn win(&self, player: usize) {
-        println!("Player {} has won the game", player + 1);
+        println!("{} has won the game", self.players[player].name);
     }
 }
 
 fn main() {
     let mut game = Game {
         grid : ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-        players : ['X', 'O']
+        players : [Player {name : "Peter".to_string(), symbol : 'X'},
+                   Player {name : "John".to_string(), symbol : 'O'}]
     };
     game.draw();
     let mut player = 0;
     loop {
         game.take_turn(player);
-        player = if player == 0 {1} else {0};
-
         if game.is_won() {break;}
+        player = if player == 0 {1} else {0};
     }
     game.win(player)
 }
